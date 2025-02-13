@@ -25,15 +25,16 @@ By leveraging technology, this project aims to reduce food waste, promote sustai
 
 ### Home Page
 
+<img src="https://raw.githubusercontent.com/LEO1234567890LEO/project/refs/heads/main/Screenshot%202025-02-09%20153430.png">
 
 
 ### Login Page
 
-
+<img src="https://raw.githubusercontent.com/LEO1234567890LEO/project/refs/heads/main/Screenshot%202025-02-13%20202606.png">
 
 ### Signup Page
 
-
+<img src="https://raw.githubusercontent.com/LEO1234567890LEO/project/refs/heads/main/Screenshot%202025-02-13%20202500.png">
 
 ## Code Explanation
 
@@ -127,22 +128,3 @@ project/
 │-- .env               # Environment variables
 │-- images/            # Screenshots for documentation
 ```
-
-## Contributing
-
-Contributions are welcome! To contribute:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -m 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a Pull Request.
-
-## License
-
-[Specify the license, e.g., MIT License]
-
-## Contact
-
-For any questions or issues, feel free to reach out at [your contact email or GitHub profile].
-
