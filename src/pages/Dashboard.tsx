@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   React.useEffect(() => {
     if (user) {
@@ -68,6 +69,56 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error updating request:', error);
       toast.error('Failed to update request');
+    }
+  }
+
+  async function handleDeleteListing(listingId: string) {
+    if (!confirm('Are you sure you want to delete this listing?')) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      // First check if there are any accepted requests for this listing
+      const { data: acceptedRequests, error: checkError } = await supabase
+        .from('food_requests')
+        .select('id')
+        .eq('listing_id', listingId)
+        .eq('status', 'accepted');
+
+      if (checkError) throw checkError;
+
+      if (acceptedRequests && acceptedRequests.length > 0) {
+        toast.error('Cannot delete listing with accepted requests');
+        return;
+      }
+
+      // Delete all pending requests for this listing first
+      const { error: requestsError } = await supabase
+        .from('food_requests')
+        .delete()
+        .eq('listing_id', listingId)
+        .in('status', ['pending', 'rejected']);
+
+      if (requestsError) throw requestsError;
+
+      // Then delete the listing
+      const { error: listingError } = await supabase
+        .from('food_listings')
+        .delete()
+        .eq('id', listingId);
+
+      if (listingError) throw listingError;
+
+      toast.success('Listing deleted successfully');
+      
+      // Update the listings state to remove the deleted listing
+      setListings(listings.filter(listing => listing.id !== listingId));
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      toast.error('Failed to delete listing');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -166,13 +217,30 @@ export default function Dashboard() {
                     <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
                       Edit
                     </button>
-                    <button className="flex-1 border border-red-600 text-red-600 py-2 px-4 rounded-md hover:bg-red-50">
-                      Delete
+                    <button 
+                      className="flex-1 border border-red-600 text-red-600 py-2 px-4 rounded-md hover:bg-red-50 disabled:opacity-50"
+                      onClick={() => handleDeleteListing(listing.id)}
+                      disabled={isDeleting}
+                    >
+                      {isDeleting ? 'Deleting...' : 'Delete'}
                     </button>
                   </div>
                 </div>
               </div>
             ))}
+            
+            {listings.length === 0 && (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500">No listings found</p>
+                <button
+                  onClick={() => setIsDonateModalOpen(true)}
+                  className="mt-4 inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Create Your First Listing
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-4">

@@ -77,7 +77,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <p> Made By stark-404 with love </p>
       </div>
     </>
   );
